@@ -35,6 +35,6 @@ cd AliEventAnalysis
 
 make -j8 
 
-./main.exe
+./main.exe /home/antony/Documents/Projects/AliQuarkonium/AliEventAnalysis/
 
 #root -l test.cpp
