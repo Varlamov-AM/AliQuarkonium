@@ -1,5 +1,6 @@
 #include <iostream>
-#include <filesystem>
+#include <stdio.h>
+#include <stdlib.h>
 #include <TFile.h>
 #include <TCanvas.h>
 #include <TTree.h>
@@ -67,13 +68,13 @@ int main(int argc, char* argv[]){
     true_chic_daughters_for_GEANT4->Branch("positron_pz", &positron_pz);
     true_chic_daughters_for_GEANT4->Branch("positron_p0", &positron_p0);
 
-	true_chic_daughters_for_GEANT4->SetAutoSave(0);
+  	true_chic_daughters_for_GEANT4->SetAutoSave(0);
 
     TChain* chain = new TChain("AliEvent_data");
 
     for (int i = 0; i <= 38; ++i){
-        std::filesystem::path p = std::filesystem::path(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i));
-        if (std::filesystem::exists(p) == 1){
+        FILE* fp = fopen(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i), "rb");
+        if (fp != NULL){
             chain->Add(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i));
         }
     }
@@ -118,6 +119,10 @@ int main(int argc, char* argv[]){
                     gam.mother_id == 20443){
 
                     int event_type = -1;
+
+                    if (fabs(gam.FMomentum().Eta()) > 0.5){
+                        continue;
+                    }
 
                     if (gam.mother_id == 10441){ event_type = 0;}
                     if (gam.mother_id == 20443){ event_type = 1;}

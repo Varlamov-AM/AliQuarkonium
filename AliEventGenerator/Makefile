@@ -3,7 +3,7 @@
 # Axel Naumann, 2011-03-03
 ######################################################################
 
-PYTHIA8      :=$(PYTHIA8PATH)
+PYTHIA8      :=/data1/varlamov/software/pythia8310
 # Need this to get SHAREDSUFFIX (e.g. dylib or so)
 SHAREDSUFFIX=so
 #-include $(PYTHIA8)/config.mk
@@ -11,10 +11,10 @@ SHAREDSUFFIX=so
 # A few variables used in this Makefile:
 EX           := main
 EXE          := $(addsuffix .exe,$(EX))
-STATICLIB    := /etc/Pythia8/pythia8308/lib/libpythia8.a
-SHAREDLIB    := /etc/Pythia8/pythia8308/lib/libpythia8.so
-DICTCXXFLAGS := -I/etc/Pythia8/pythia8308/include
-EXTFLAG      := -I/home/antony/Documents/Projects/AliQuarkonium/AliEventLib/include
+STATICLIB    := $(PYTHIA8)/lib/libpythia8.a
+SHAREDLIB    := $(PYTHIA8)/lib/libpythia8.so
+DICTCXXFLAGS := -I$(PYTHIA8)/include/
+EXTFLAG      := -I/data2/varlamov/projects/AliQuarkonium/AliEventLib/include/
 ROOTCXXFLAGS := $(DICTCXXFLAGS) $(shell root-config --cflags)
 CXXFLAGS     := -Wall -g
 
@@ -25,21 +25,24 @@ endif
 
 
 # LDFLAGS1 for static library, LDFLAGS2 for shared library
+#  -L$PYTHIA8/lib -L/etc/Pythia8/LHAPDF/lib/ -lpythia8 -lLHAPDF $(LIBGZIP)
+#  -L/etc/Pythia8/pythia8308/lib -L/etc/Pythia8/LHAPDF/lib/ -lpythia8 -lLHAPDF $(LIBGZIP)
 LDFLAGS1 := $(shell root-config --ldflags --glibs) \
-  -L/etc/Pythia8/pythia8308/lib -L/etc/Pythia8/LHAPDF/lib/ -lpythia8 -lLHAPDF $(LIBGZIP)
+  -L$(PYTHIA8)/lib -lpythia8  $(LIBGZIP)
 LDFLAGS2 := $(shell root-config --ldflags --glibs) \
-  -L/etc/Pythia8/pythia8308/lib -L/etc/Pythia8/LHAPDF/lib/ -lpythia8 -lLHAPDF $(LIBGZIP)
+  -L$(PYTHIA8)/lib -lpythia8 $(LIBGZIP)
+
 
 FILES_SRC =  src/main.cpp src/Init.cpp
 FILES_OBJ =  $(FILES_SRC:%.cpp=%.o)
-ROOT_DICT = /home/antony/Documents/Projects/AliQuarkonium/AliEventLib/build/libpythiaDictionary.so
+ROOT_DICT = /data2/varlamov/projects/AliQuarkonium/AliEventLib/build/libpythiaDictionary.so
 
 # Default target; make examples (but not shared dictionary)
 all: $(EX)
 
 # Rule to build hist example. Needs static PYTHIA 8 library
 $(EX): $(SHAREDLIB) $(FILES_OBJ) $(ROOT_DICT)
-	$(CXX) $(EXTFLAG) $(ROOTCXXFLAGS) $(FILES_OBJ) $(ROOT_DICT) -o $@.exe $(LDFLAGS1)
+	$(CXX) $(EXTFLAG) $(ROOTCXXFLAGS) $(FILES_OBJ) $(ROOT_DICT) -L/data2/varlamov/projects/AliQuarkonium/AliEventLib/build/ -L/data2/varlamov/soft/pythia8310/lib/ -o $@.exe $(LDFLAGS1)
 
 %.o: %.cpp
 	$(CXX) -o $@ -c $< $(CXXFLAGS) $(EXTFLAG) $(ROOTCXXFLAGS)

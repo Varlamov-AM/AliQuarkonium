@@ -4,7 +4,7 @@
 # Otherwise, you must tell the build system where to look for ROOT,
 # for example by passing `-DROOT_DIR="/path/to/root/installation` at CMake configuration time.
 
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(pythiaDictionary)
 
 #set(SRC=(${CMAKE_CURRENT_SOURCE_DIR}/src))
