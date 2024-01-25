@@ -87,9 +87,10 @@ int main(int argc, char* argv[]){
     double branchings[3] = {5.971e-2 * 1.4e-2, 5.971e-2 * 34.3e-2, 5.971e-2 * 19.0e-2};
 
 
-    for (int i = 0; i < n; ++i){
+    for (int i = 0; i < n/100; ++i){
         chain->GetEntry(i);
         std::vector<AliParticle> chi_cJ   = General_event->chic;
+        std::vector<AliParticle> Jpsi     = General_event->Jpsi;
         std::vector<AliParticle> electron = General_event->electrons;
         std::vector<AliParticle> positron = General_event->positrons;
         std::vector<AliParticle> photon   = General_event->photons;
@@ -98,20 +99,68 @@ int main(int argc, char* argv[]){
             printf("Handled events:%10d\n", i);
         }
 
-        if (!chi_cJ.empty()){
+        if (!chi_cJ.empty() and chi_cJ.size() == 1){
+            for (auto jpsi : Jpsi){
+                if (jpsi.number_in_event == chi_cJ[0].daughter_1_number_in_event){
+                    int electron_number = jpsi.daughter_1_number_in_event;
+                    int positron_number = jpsi.daughter_2_number_in_event;
+                    AliParticle elec_p;
+                    AliParticle posi_p;
+                    std::cout << jpsi.number_in_event << "\n";
+                    for (auto el : electron){
+                        if (el.mother_id == 443 and el.number_in_event == electron_number and el.mother_number_in_event == jpsi.number_in_event){
+                            std::cout << "electron_data " << el.mother_id << " " << el.number_in_event << " " << electron_number << " " << el.mother_number_in_event << " " << jpsi.number_in_event << "\n";
+                            electron_p0 = el.p0;
+                            electron_px = el.px;
+                            electron_py = el.py;
+                            electron_pz = el.pz;
+
+                            elec_p = el;
+                            break;
+                        }
+                    }
+                    for (auto po : positron){
+                        if (po.mother_id == 443 and po.number_in_event == positron_number){
+                            std::cout << "positron_data " << po.mother_id << " " << po.number_in_event << " " << positron_number << " " << po.mother_number_in_event << " " << jpsi.number_in_event << "\n";
+                            positron_p0 = po.p0;
+                            positron_px = po.px;
+                            positron_py = po.py;
+                            positron_pz = po.pz;
+
+                            posi_p = po;
+                            break;
+                        }
+                    }
+
+                    TLorentzVector elec_v = TLorentzVector(electron_px, electron_py, electron_pz, electron_p0);
+                    TLorentzVector posi_v = TLorentzVector(positron_px, positron_py, positron_pz, positron_p0);
+                    TLorentzVector jpsi_v = jpsi.FMomentum();
+                    if (fabs((elec_v + posi_v).M() - 3.096) > 0.002){
+                        std::cout << (elec_v + posi_v).M() << " " << elec_v.M() << " " << posi_v.M() << " " << jpsi_v.M() << "\n";
+                        std::cout << elec_v.Px() << " " <<  posi_v.Px() << " " << jpsi_v.Px() << "\n";
+                        std::cout << elec_p.number_in_event << " " << electron_number << " " << elec_p.mother_number_in_event << " " << posi_p.number_in_event << " " << positron_number << " " << posi_p.mother_number_in_event << "\n";
+                        return -1;  
+                    }
+                }
+            }
+
+            /*
             for (auto el : electron){
-                if (el.mother_id == 443)
-                electron_p0 = el.p0;
-                electron_px = el.px;
-                electron_py = el.py;
-                electron_pz = el.pz;
+                if (el.mother_id == 443){
+                    electron_p0 = el.p0;
+                    electron_px = el.px;
+                    electron_py = el.py;
+                    electron_pz = el.pz;
+                    Jpsi_num_in_event = el.mother_number_in_event;
+                }
             }
             for (auto po : positron){
-                if (po.mother_id == 443)
-                positron_p0 = po.p0;
-                positron_px = po.px;
-                positron_py = po.py;
-                positron_pz = po.pz;
+                if (po.mother_id == 443 and po.mother_number_in_event == Jpsi_num_in_event){
+                    positron_p0 = po.p0;
+                    positron_px = po.px;
+                    positron_py = po.py;
+                    positron_pz = po.pz;
+                }
             }
             for (auto gam : photon){
                 if (gam.mother_id == 445 or 
@@ -134,7 +183,7 @@ int main(int argc, char* argv[]){
                     gamma_pz = gam.pz;
                     branching = branchings[event_type];
                 }
-            }
+            }*/
         } else {continue;}
 
         true_chic_daughters_for_GEANT4->Fill();
