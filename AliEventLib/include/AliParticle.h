@@ -28,8 +28,8 @@ public:
     }
 
     int Number_of_daughters(){
-        return daughter_2_number_in_event - daughter_1_number_in_event;
+        return daughter_2_number_in_event - daughter_1_number_in_event + 1;
     }
   
-    ClassDef(AliParticle,1);
+    ClassDef(AliParticle, 2);
 };

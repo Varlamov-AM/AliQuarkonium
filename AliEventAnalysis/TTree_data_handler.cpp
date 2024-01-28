@@ -50,6 +50,8 @@ int main(int argc, char* argv[]){
     double positron_py = 0;
     double positron_pz = 0;
     double positron_p0 = 0;
+    double chic_mass = 0;
+    double chic_pt = 0;
 
     true_chic_daughters_for_GEANT4->Branch("event_branching", &branching);
 
@@ -85,112 +87,62 @@ int main(int argc, char* argv[]){
     AliEvent *General_event = 0;
     chain->SetBranchAddress("AliEvent", &General_event);
     double branchings[3] = {5.971e-2 * 1.4e-2, 5.971e-2 * 34.3e-2, 5.971e-2 * 19.0e-2};
+    // TH2D* hist_chic = new TH2D("hist_chic", "chi_c mass", 500, 3., 4., 10, 0., 10.);
+    // TH2D* hist_chic_cand = new TH2D("hist_chic_cand", "chi_c mass cand", 500, 3., 4., 10, 0., 10.);
+    // TH2D* hist_jpsi = new TH2D("hist_jpsi", "Jpsi mass", 100, 3., 3.2, 10, 0., 10.);
 
 
-    for (int i = 0; i < n/100; ++i){
+    for (int i = 0; i < n; ++i){
         chain->GetEntry(i);
-        std::vector<AliParticle> chi_cJ   = General_event->chic;
-        std::vector<AliParticle> Jpsi     = General_event->Jpsi;
-        std::vector<AliParticle> electron = General_event->electrons;
-        std::vector<AliParticle> positron = General_event->positrons;
-        std::vector<AliParticle> photon   = General_event->photons;
+
+		bool signal_event_in_data                 = General_event->signal_event_in_data;
+		std::vector<AliParticle> chic             = General_event->chic;
+		std::vector<AliParticle> Jpsi             = General_event->Jpsi;
+		std::vector<AliParticle> signal_electrons = General_event->signal_electrons;
+		std::vector<AliParticle> signal_positrons = General_event->signal_positrons;
+		std::vector<AliParticle> signal_photons   = General_event->signal_photons;
 
         if (i % 10000 == 0){
             printf("Handled events:%10d\n", i);
         }
+        if (signal_event_in_data){
+            if (chic.size() == 1){
 
-        if (!chi_cJ.empty() and chi_cJ.size() == 1){
-            for (auto jpsi : Jpsi){
-                if (jpsi.number_in_event == chi_cJ[0].daughter_1_number_in_event){
-                    int electron_number = jpsi.daughter_1_number_in_event;
-                    int positron_number = jpsi.daughter_2_number_in_event;
-                    AliParticle elec_p;
-                    AliParticle posi_p;
-                    std::cout << jpsi.number_in_event << "\n";
-                    for (auto el : electron){
-                        if (el.mother_id == 443 and el.number_in_event == electron_number and el.mother_number_in_event == jpsi.number_in_event){
-                            std::cout << "electron_data " << el.mother_id << " " << el.number_in_event << " " << electron_number << " " << el.mother_number_in_event << " " << jpsi.number_in_event << "\n";
-                            electron_p0 = el.p0;
-                            electron_px = el.px;
-                            electron_py = el.py;
-                            electron_pz = el.pz;
+                electron_p0 = signal_electrons[0].p0;
+                electron_px = signal_electrons[0].px;
+                electron_py = signal_electrons[0].py;
+                electron_pz = signal_electrons[0].pz;
 
-                            elec_p = el;
-                            break;
-                        }
-                    }
-                    for (auto po : positron){
-                        if (po.mother_id == 443 and po.number_in_event == positron_number){
-                            std::cout << "positron_data " << po.mother_id << " " << po.number_in_event << " " << positron_number << " " << po.mother_number_in_event << " " << jpsi.number_in_event << "\n";
-                            positron_p0 = po.p0;
-                            positron_px = po.px;
-                            positron_py = po.py;
-                            positron_pz = po.pz;
+                positron_p0 = signal_positrons[0].p0;
+                positron_px = signal_positrons[0].px;
+                positron_py = signal_positrons[0].py;
+                positron_pz = signal_positrons[0].pz;
 
-                            posi_p = po;
-                            break;
-                        }
-                    }
+                gamma_p0 = signal_photons[0].p0;
+                gamma_px = signal_photons[0].px;
+                gamma_py = signal_photons[0].py;
+                gamma_pz = signal_photons[0].pz;
 
-                    TLorentzVector elec_v = TLorentzVector(electron_px, electron_py, electron_pz, electron_p0);
-                    TLorentzVector posi_v = TLorentzVector(positron_px, positron_py, positron_pz, positron_p0);
-                    TLorentzVector jpsi_v = jpsi.FMomentum();
-                    if (fabs((elec_v + posi_v).M() - 3.096) > 0.002){
-                        std::cout << (elec_v + posi_v).M() << " " << elec_v.M() << " " << posi_v.M() << " " << jpsi_v.M() << "\n";
-                        std::cout << elec_v.Px() << " " <<  posi_v.Px() << " " << jpsi_v.Px() << "\n";
-                        std::cout << elec_p.number_in_event << " " << electron_number << " " << elec_p.mother_number_in_event << " " << posi_p.number_in_event << " " << positron_number << " " << posi_p.mother_number_in_event << "\n";
-                        return -1;  
-                    }
+                if (chic[0].id == 10441){
+                    branching = branchings[0];
+                } else if (chic[0].id == 20443){
+                    branching = branchings[1];
+                } else if (chic[0].id == 445){
+                    branching = branchings[2];
                 }
+                // hist_chic->Fill(chic[0].FMomentum().M(), chic[0].FMomentum().Pt());
+                // hist_jpsi->Fill(Jpsi[0].FMomentum().M(), Jpsi[0].FMomentum().Pt());
+                // hist_chic_cand->Fill((signal_electrons[0].FMomentum() + signal_positrons[0].FMomentum() + signal_photons[0].FMomentum()).M(), (signal_electrons[0].FMomentum() + signal_positrons[0].FMomentum() + signal_photons[0].FMomentum()).Pt());
+                true_chic_daughters_for_GEANT4->Fill();
             }
-
-            /*
-            for (auto el : electron){
-                if (el.mother_id == 443){
-                    electron_p0 = el.p0;
-                    electron_px = el.px;
-                    electron_py = el.py;
-                    electron_pz = el.pz;
-                    Jpsi_num_in_event = el.mother_number_in_event;
-                }
-            }
-            for (auto po : positron){
-                if (po.mother_id == 443 and po.mother_number_in_event == Jpsi_num_in_event){
-                    positron_p0 = po.p0;
-                    positron_px = po.px;
-                    positron_py = po.py;
-                    positron_pz = po.pz;
-                }
-            }
-            for (auto gam : photon){
-                if (gam.mother_id == 445 or 
-                    gam.mother_id == 10441 or
-                    gam.mother_id == 20443){
-
-                    int event_type = -1;
-
-                    if (fabs(gam.FMomentum().Eta()) > 0.5){
-                        continue;
-                    }
-
-                    if (gam.mother_id == 10441){ event_type = 0;}
-                    if (gam.mother_id == 20443){ event_type = 1;}
-                    if (gam.mother_id == 445)  { event_type = 2;}
-
-                    gamma_p0 = gam.p0;
-                    gamma_px = gam.px;
-                    gamma_py = gam.py;
-                    gamma_pz = gam.pz;
-                    branching = branchings[event_type];
-                }
-            }*/
-        } else {continue;}
-
-        true_chic_daughters_for_GEANT4->Fill();
-
+        }
     }
 
     true_chic_daughters_for_GEANT4->Write();
+    // hist_chic->Write();
+    // hist_jpsi->Write();
+    // hist_chic_cand->Write();
+
     output->Close();
     
 }

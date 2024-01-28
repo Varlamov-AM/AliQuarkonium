@@ -8,10 +8,13 @@
 class AliEvent: public TObject{
 	public:
 
-	int number_of_particle_in_event;
-
+	bool signal_event_in_data;
 	std::vector<AliParticle> chic;
 	std::vector<AliParticle> Jpsi;
+	std::vector<AliParticle> signal_electrons;
+	std::vector<AliParticle> signal_positrons;
+	std::vector<AliParticle> signal_photons;
+	
 	std::vector<AliParticle> electrons;
 	std::vector<AliParticle> positrons;
 	std::vector<AliParticle> muons;
@@ -23,5 +26,5 @@ class AliEvent: public TObject{
 	AliEvent(){};
 	virtual ~AliEvent(){};
 
-	ClassDef(AliEvent,1);
+	ClassDef(AliEvent, 2);
 };
