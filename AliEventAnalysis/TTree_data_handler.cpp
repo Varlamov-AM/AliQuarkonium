@@ -74,11 +74,16 @@ int main(int argc, char* argv[]){
 
     TChain* chain = new TChain("AliEvent_data");
 
-    for (int i = 0; i <= 38; ++i){
-        FILE* fp = fopen(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i), "rb");
-        if (fp != NULL){
-            chain->Add(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i));
-        }
+    //for (int i = 0; i <= 38; ++i){
+    //    FILE* fp = fopen(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i), "rb");
+    //    if (fp != NULL){
+    //        chain->Add(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i));
+    //    }
+    //}
+
+    FILE* fp = fopen(Form("%sAliEvent_class_data.root", source_data_path.Data()), "rb");
+    if (fp != NULL){
+        chain->Add(Form("%sAliEvent_class_data.root", source_data_path.Data()));
     }
 
     int n = chain->GetEntries();
@@ -87,9 +92,6 @@ int main(int argc, char* argv[]){
     AliEvent *General_event = 0;
     chain->SetBranchAddress("AliEvent", &General_event);
     double branchings[3] = {5.971e-2 * 1.4e-2, 5.971e-2 * 34.3e-2, 5.971e-2 * 19.0e-2};
-    // TH2D* hist_chic = new TH2D("hist_chic", "chi_c mass", 500, 3., 4., 10, 0., 10.);
-    // TH2D* hist_chic_cand = new TH2D("hist_chic_cand", "chi_c mass cand", 500, 3., 4., 10, 0., 10.);
-    // TH2D* hist_jpsi = new TH2D("hist_jpsi", "Jpsi mass", 100, 3., 3.2, 10, 0., 10.);
 
 
     for (int i = 0; i < n; ++i){
@@ -130,19 +132,12 @@ int main(int argc, char* argv[]){
                 } else if (chic[0].id == 445){
                     branching = branchings[2];
                 }
-                // hist_chic->Fill(chic[0].FMomentum().M(), chic[0].FMomentum().Pt());
-                // hist_jpsi->Fill(Jpsi[0].FMomentum().M(), Jpsi[0].FMomentum().Pt());
-                // hist_chic_cand->Fill((signal_electrons[0].FMomentum() + signal_positrons[0].FMomentum() + signal_photons[0].FMomentum()).M(), (signal_electrons[0].FMomentum() + signal_positrons[0].FMomentum() + signal_photons[0].FMomentum()).Pt());
                 true_chic_daughters_for_GEANT4->Fill();
             }
         }
     }
 
     true_chic_daughters_for_GEANT4->Write();
-    // hist_chic->Write();
-    // hist_jpsi->Write();
-    // hist_chic_cand->Write();
-
     output->Close();
     
 }
