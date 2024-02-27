@@ -34,6 +34,17 @@ int main(int argc, char* argv[]){
         source_data_path = TString(argv[1]);
     }
     
+    TFile* output_tree = new TFile("tree_for_Geant_soft_QCD.root", "RECREATE");
+    output_tree->cd();
+    TTree* softQCD_tree = new TTree("soft_QCD_data", "soft_QCD_data");
+    softQCD_tree->SetMaxTreeSize(1000000000);
+	softQCD_tree->SetAutoSave(0);
+
+    std::vector<std::vector<double>>* event_vector = new std::vector<std::vector<double>>;
+
+    softQCD_tree->Branch("event", &event_vector);
+
+
     TChain* chain = new TChain("AliEvent_data");
 
     for (int i = 0; i <= 18; ++i){
@@ -90,11 +101,22 @@ int main(int argc, char* argv[]){
     TH2D* pion_p_e = new TH2D("pion_p_e", "pion_p_e", 1000, 0., 20., 1000., 0., 20.);
     TH2D* kaonl_p_e = new TH2D("kaonl_p_e", "kaonl_p_e", 1000, 0., 20., 1000., 0., 20.);
     TH2D* neutron_p_e = new TH2D("neutron_p_e", "neutron_p_e", 1000, 0., 20., 1000., 0., 20.);
+    electrons_p_e->Sumw2();
+    positrons_p_e->Sumw2();
+    muons_p_e->Sumw2();
+    antimuons_p_e->Sumw2();
+    gamma_p_e->Sumw2();
+    proton_p_e->Sumw2();
+    kaon_p_e->Sumw2();
+    pion_p_e->Sumw2();
+    kaonl_p_e->Sumw2();
+    neutron_p_e->Sumw2();
 
 
 
     for (int i = 0; i < chain->GetEntries(); ++i){
 
+        event_vector->clear();
         chain->GetEntry(i);
 
         if (i % 10000 == 0){
@@ -119,26 +141,46 @@ int main(int argc, char* argv[]){
         for (auto elec : electrons){
             electrons_pt_eta->Fill(elec.FMomentum().Pt(), elec.FMomentum().Eta());
             electrons_p_e->Fill(elec.FMomentum().P(), elec.FMomentum().E());
+            if (fabs(elec.FMomentum().Eta()) < 2.){
+                std::vector<double> tmp = {elec.p0, elec.px, elec.py, elec.pz, elec.id};
+                event_vector->push_back(tmp);
+            }
         }
 
         for (auto posi : positrons){
             positrons_pt_eta->Fill(posi.FMomentum().Pt(), posi.FMomentum().Eta());
             positrons_p_e->Fill(posi.FMomentum().P(), posi.FMomentum().E());
+            if (fabs(posi.FMomentum().Eta()) < 2.){
+                std::vector<double> tmp = {posi.p0, posi.px, posi.py, posi.pz, posi.id};
+                event_vector->push_back(tmp);
+            }
         }
 
         for (auto muon : muons){
             muons_pt_eta->Fill(muon.FMomentum().Pt(), muon.FMomentum().Eta());
             muons_p_e->Fill(muon.FMomentum().P(), muon.FMomentum().E());
+            if (fabs(muon.FMomentum().Eta()) < 2.){
+                std::vector<double> tmp = {muon.p0, muon.px, muon.py, muon.pz, muon.id};
+                event_vector->push_back(tmp);
+            }
         }
 
         for (auto antimuon : antimuons){
             antimuons_pt_eta->Fill(antimuon.FMomentum().Pt(), antimuon.FMomentum().Eta());
             antimuons_p_e->Fill(antimuon.FMomentum().P(), antimuon.FMomentum().E());
+            if (fabs(antimuon.FMomentum().Eta()) < 2.){
+                std::vector<double> tmp = {antimuon.p0, antimuon.px, antimuon.py, antimuon.pz, antimuon.id};
+                event_vector->push_back(tmp);
+            }
         }
 
         for (auto gamma : photons){
             gamma_pt_eta->Fill(gamma.FMomentum().Pt(), gamma.FMomentum().Eta());
             gamma_p_e->Fill(gamma.FMomentum().P(), gamma.FMomentum().E());
+            if (fabs(gamma.FMomentum().Eta()) < 2.){
+                std::vector<double> tmp = {gamma.p0, gamma.px, gamma.py, gamma.pz, gamma.id};
+                event_vector->push_back(tmp);
+            }
         }
 
         for (auto charg : charged){
@@ -154,6 +196,10 @@ int main(int argc, char* argv[]){
                 pion_pt_eta->Fill(charg.FMomentum().Pt(), charg.FMomentum().Eta());
                 pion_p_e->Fill(charg.FMomentum().P(), charg.FMomentum().E());
             }
+            if (fabs(charg.FMomentum().Eta()) < 2.){
+                std::vector<double> tmp = {charg.p0, charg.px, charg.py, charg.pz, charg.id};
+                event_vector->push_back(tmp);
+            }
         }
         for (auto neutr : neutral){
             if (neutr.id == idn){
@@ -164,7 +210,12 @@ int main(int argc, char* argv[]){
                 kaonl_pt_eta->Fill(neutr.FMomentum().Pt(), neutr.FMomentum().Eta());
                 kaonl_p_e->Fill(neutr.FMomentum().P(), neutr.FMomentum().E());
             }
+            if (fabs(neutr.FMomentum().Eta()) < 2.){
+                std::vector<double> tmp = {neutr.p0, neutr.px, neutr.py, neutr.pz, neutr.id};
+                event_vector->push_back(tmp);
+            }
         }
+        softQCD_tree->Fill();
     }
 
     electrons_pt_eta->Write();
@@ -190,6 +241,9 @@ int main(int argc, char* argv[]){
     kaonl_p_e->Write();
     
     output->Close();
+
+    output_tree->cd();
+    softQCD_tree->Write();
 
     return 0;
 }
