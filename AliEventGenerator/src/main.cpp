@@ -1,9 +1,10 @@
 // Stdlib header file for input and output.
 #include <iostream>
+#include <unistd.h>
 
 // Header file to access Pythia 8 program elements.
-#include "Pythia8/Pythia.h"
-//#include "/data2/varlamov/soft/pythia8310/include/Pythia8/Pythia.h"
+//#include "Pythia8/Pythia.h"
+#include "/data1/varlamov/software/pythia8310/include/Pythia8/Pythia.h"
 
 // ROOT, for histogramming.
 #include "TH1.h"
@@ -172,13 +173,51 @@ int main(int argc, char* argv[]) {
 						}
 					}
 				}
-			}
-			
-		}
+			}	
+
+      if (pythia.event[i].id() == idElectron){
+        AliParticle electron;
+        fill_AliParticle_with_pythia_particle(pythia.event, i, electron);
+        electrons.push_back(electron);
+	  	}
+
+      if (pythia.event[i].id() == -idElectron){
+        AliParticle positron;
+        fill_AliParticle_with_pythia_particle(pythia.event, i, positron);
+        positrons.push_back(positron);
+      }
+
+      if (pythia.event[i].id() == idMuon){
+        AliParticle muon;
+        fill_AliParticle_with_pythia_particle(pythia.event, i, muon);
+        muons.push_back(muon);
+      }
+
+      if (pythia.event[i].id() == -idMuon){
+        AliParticle antimuon;
+        fill_AliParticle_with_pythia_particle(pythia.event, i, antimuon);
+        antimuons.push_back(antimuon);
+      }
+
+      if (pythia.event[i].id() == idK0L or pythia.event[i].id() == idn or pythia.event[i].id() == idPin){
+        AliParticle neutralp;
+        fill_AliParticle_with_pythia_particle(pythia.event, i, neutralp);
+        neutral.push_back(neutralp);
+      }
+
+
+      if (pythia.event[i].id() == idKc or pythia.event[i].id() == idp or pythia.event[i].id() == idPic){
+        AliParticle chargedp;
+        fill_AliParticle_with_pythia_particle(pythia.event, i, chargedp);
+        charged.push_back(chargedp);
+      }
+
+
+    }
 
 		General_event->signal_event_in_data = signal_event_in_data;
-		General_event->chic 	            = chic;
-		General_event->Jpsi 	            = Jpsi;
+		General_event->chic 	              = chic;
+		General_event->Jpsi 	              = Jpsi;
 		General_event->signal_electrons     = signal_electrons;
 		General_event->signal_positrons     = signal_positrons;
 		General_event->signal_photons       = signal_photons;
@@ -196,7 +235,8 @@ int main(int argc, char* argv[]) {
 	}
       
 	test_tree->Write();
-	TH1F *hCross_section_hist = new TH1F("hCross_section_hist", "xsection and ntrials data", 2, 0., 1.);
+  test_tree->FlushBaskets();	
+  TH1F *hCross_section_hist = new TH1F("hCross_section_hist", "xsection and ntrials data", 2, 0., 1.);
 
 
 	double xsection = pythia.info.sigmaGen();
@@ -210,6 +250,7 @@ int main(int argc, char* argv[]) {
 
 	hCross_section_hist->Write();
 	cross_section_data->Close();
+
 	
 	return 0;
 

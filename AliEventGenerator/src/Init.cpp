@@ -23,8 +23,8 @@ void Init(Pythia* pythia)
   // pythia->readString("PhaseSpace:mHatMin = 2.");
   // pythia->readString("PhaseSpace:mHatMax = 4.");
 
-  //pythia->readString("SoftQCD:all = on");
-  pythia->readString("Charmonium:all  = on");
+  pythia->readString("SoftQCD:all = on");
+  //pythia->readString("Charmonium:all  = on");
   //pythia->readString("Onia:all(3S1)  = on");
   //pythia->readString("Charmonium:states(3S1) = 443");
   //pythia->readString("Onia:all(3PJ) = on");
@@ -39,20 +39,20 @@ void Init(Pythia* pythia)
   //pythia->readString("111:offIfAny = 11 -11");
 
   // Switch off all J/psi decays but J/psi -> e+ e-
-  pythia->readString("443:onMode = off");
-  pythia->readString("443:onIfAll = 11 -11");
+  // pythia->readString("443:onMode = off");
+  // pythia->readString("443:onIfAll = 11 -11");
 
   // Switch off all chi_c2 decays but chi_c2 -> J/psi gamma
-  pythia->readString("445:onMode = off");
-  pythia->readString("445:onIfAll = 443 22");
+  // pythia->readString("445:onMode = off");
+  // pythia->readString("445:onIfAll = 443 22");
 
   // Switch off all chi_c0 decays but chi_c0 -> J/psi gamma
-  pythia->readString("10441:onMode = off");
-  pythia->readString("10441:onIfAll = 443 22");
+  // pythia->readString("10441:onMode = off");
+  // pythia->readString("10441:onIfAll = 443 22");
 
   // Switch off all chi_c1 decays but chi_c1 -> J/psi gamma
-  pythia->readString("20443:onMode = off");
-  pythia->readString("20443:onIfAll = 443 22");
+  // pythia->readString("20443:onMode = off");
+  // pythia->readString("20443:onIfAll = 443 22");
 
   //pythia->readString("PhaseSpace:pTHatMin = 5.");
 
