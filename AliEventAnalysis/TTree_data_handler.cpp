@@ -215,7 +215,9 @@ int main(int argc, char* argv[]){
                 event_vector->push_back(tmp);
             }
         }
-        softQCD_tree->Fill();
+        if (event_vector->size() != 0){
+            softQCD_tree->Fill();
+        }
     }
 
     electrons_pt_eta->Write();
