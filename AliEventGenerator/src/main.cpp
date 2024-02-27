@@ -175,38 +175,44 @@ int main(int argc, char* argv[]) {
 				}
 			}	
 
-      if (pythia.event[i].id() == idElectron){
+      if (pythia.event[i].id() == idElectron and pythia.event[i].pT() > 0.1){
         AliParticle electron;
         fill_AliParticle_with_pythia_particle(pythia.event, i, electron);
         electrons.push_back(electron);
 	  	}
 
-      if (pythia.event[i].id() == -idElectron){
+      if (pythia.event[i].id() == -idElectron and pythia.event[i].pT() > 0.1){
         AliParticle positron;
         fill_AliParticle_with_pythia_particle(pythia.event, i, positron);
         positrons.push_back(positron);
       }
 
-      if (pythia.event[i].id() == idMuon){
+      if (pythia.event[i].id() == idMuon and pythia.event[i].pT() > 0.1){
         AliParticle muon;
         fill_AliParticle_with_pythia_particle(pythia.event, i, muon);
         muons.push_back(muon);
       }
 
-      if (pythia.event[i].id() == -idMuon){
+      if (pythia.event[i].id() == -idMuon and pythia.event[i].pT() > 0.1){
         AliParticle antimuon;
         fill_AliParticle_with_pythia_particle(pythia.event, i, antimuon);
         antimuons.push_back(antimuon);
       }
 
-      if (pythia.event[i].id() == idK0L or pythia.event[i].id() == idn or pythia.event[i].id() == idPin){
+      if (pythia.event[i].id() == idPhoton){
+        AliParticle photon;
+        fill_AliParticle_with_pythia_particle(pythia.event, i, photon);
+        photons.push_back(photon);
+      }
+
+      if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn or pythia.event[i].id() == idPin) and pythia.event[i].pT() > 0.1){
         AliParticle neutralp;
         fill_AliParticle_with_pythia_particle(pythia.event, i, neutralp);
         neutral.push_back(neutralp);
       }
 
 
-      if (pythia.event[i].id() == idKc or pythia.event[i].id() == idp or pythia.event[i].id() == idPic){
+      if ((pythia.event[i].id() == idKc or pythia.event[i].id() == idp or pythia.event[i].id() == idPic) and pythia.event[i].pT() > 0.1){
         AliParticle chargedp;
         fill_AliParticle_with_pythia_particle(pythia.event, i, chargedp);
         charged.push_back(chargedp);
@@ -230,12 +236,13 @@ int main(int argc, char* argv[]) {
 		General_event->charged              = charged;
 		General_event->neutral              = neutral;
 
-		test_tree->Fill();
+    if (electrons.size() != 0){
+  		test_tree->Fill();
+    } else {continue;}
 
 	}
       
-	test_tree->Write();
-  test_tree->FlushBaskets();	
+	test_tree->Write();	
   TH1F *hCross_section_hist = new TH1F("hCross_section_hist", "xsection and ntrials data", 2, 0., 1.);
 
 

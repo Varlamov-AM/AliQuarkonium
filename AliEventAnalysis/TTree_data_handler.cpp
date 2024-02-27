@@ -35,6 +35,7 @@ int main(int argc, char* argv[]){
     }
     
     TFile* output = new TFile(Form("%selectron_positron_gamma_4momentum.root", source_data_path.Data()), "RECREATE");
+    output->cd();
     TTree* true_chic_daughters_for_GEANT4 = new TTree("signal_event_electron_positron_gamma_from_chic_with_branchings", "signal_event_electron_positron_gamma_from_chic_with_branchings");
 
     double branching = 0;
@@ -50,8 +51,6 @@ int main(int argc, char* argv[]){
     double positron_py = 0;
     double positron_pz = 0;
     double positron_p0 = 0;
-    double chic_mass = 0;
-    double chic_pt = 0;
 
     true_chic_daughters_for_GEANT4->Branch("event_branching", &branching);
 
@@ -72,71 +71,27 @@ int main(int argc, char* argv[]){
 
   	true_chic_daughters_for_GEANT4->SetAutoSave(0);
 
-    TChain* chain = new TChain("AliEvent_data");
-
-    //for (int i = 0; i <= 38; ++i){
-    //    FILE* fp = fopen(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i), "rb");
-    //    if (fp != NULL){
-    //        chain->Add(Form("%sAliEvent_class_data_%d.root", source_data_path.Data(), i));
-    //    }
-    //}
-
-    FILE* fp = fopen(Form("%sAliEvent_class_data.root", source_data_path.Data()), "rb");
-    if (fp != NULL){
-        chain->Add(Form("%sAliEvent_class_data.root", source_data_path.Data()));
-    }
-
-    int n = chain->GetEntries();
-    printf("Number of entries: %10d\n", n);
-
-    AliEvent *General_event = 0;
-    chain->SetBranchAddress("AliEvent", &General_event);
-    double branchings[3] = {5.971e-2 * 1.4e-2, 5.971e-2 * 34.3e-2, 5.971e-2 * 19.0e-2};
-
-
-    for (int i = 0; i < n; ++i){
-        chain->GetEntry(i);
-
-		bool signal_event_in_data                 = General_event->signal_event_in_data;
-		std::vector<AliParticle> chic             = General_event->chic;
-		std::vector<AliParticle> Jpsi             = General_event->Jpsi;
-		std::vector<AliParticle> signal_electrons = General_event->signal_electrons;
-		std::vector<AliParticle> signal_positrons = General_event->signal_positrons;
-		std::vector<AliParticle> signal_photons   = General_event->signal_photons;
-
-        if (i % 10000 == 0){
-            printf("Handled events:%10d\n", i);
-        }
-        if (signal_event_in_data){
-            if (chic.size() == 1){
-
-                electron_p0 = signal_electrons[0].p0;
-                electron_px = signal_electrons[0].px;
-                electron_py = signal_electrons[0].py;
-                electron_pz = signal_electrons[0].pz;
-
-                positron_p0 = signal_positrons[0].p0;
-                positron_px = signal_positrons[0].px;
-                positron_py = signal_positrons[0].py;
-                positron_pz = signal_positrons[0].pz;
-
-                gamma_p0 = signal_photons[0].p0;
-                gamma_px = signal_photons[0].px;
-                gamma_py = signal_photons[0].py;
-                gamma_pz = signal_photons[0].pz;
-
-                if (chic[0].id == 10441){
-                    branching = branchings[0];
-                } else if (chic[0].id == 20443){
-                    branching = branchings[1];
-                } else if (chic[0].id == 445){
-                    branching = branchings[2];
-                }
-                true_chic_daughters_for_GEANT4->Fill();
+    for (int i = 0; i < 50; ++i){
+        for (int j = 0; j < 10000; ++j){
+            if (j % 1000 == 0){
+                printf("Handled events:%10d\n", j);
             }
+            electron_p0 = 0;
+            electron_px = 0;
+            electron_py = 0;
+            electron_pz = 0;
+
+            positron_p0 = 0;
+            positron_px = 0;
+            positron_py = 0;
+            positron_pz = 0;
+
+            gamma_p0 = i * 0.1;
+            gamma_px = 0;
+            gamma_py = 0;
+            gamma_pz = i * 0.1;
         }
     }
-
     true_chic_daughters_for_GEANT4->Write();
     output->Close();
     
