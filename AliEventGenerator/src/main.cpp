@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
         photons.push_back(photon);
       }
 
-      if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn or pythia.event[i].id() == idPin) and pythia.event[i].pT() > 0.1){
+      if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn) and pythia.event[i].pT() > 0.1){
         AliParticle neutralp;
         fill_AliParticle_with_pythia_particle(pythia.event, i, neutralp);
         neutral.push_back(neutralp);
