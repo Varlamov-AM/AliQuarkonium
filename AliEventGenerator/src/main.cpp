@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 // Header file to access Pythia 8 program elements.
-//#include "Pythia8/Pythia.h"
+// #include "Pythia8/Pythia.h"
 #include "/data1/varlamov/software/pythia8310/include/Pythia8/Pythia.h"
 
 // ROOT, for histogramming.
@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
         antimuons.push_back(antimuon);
       }
 
-      if (pythia.event[i].id() == idPhoton){
+      if (pythia.event[i].id() == idPhoton and pythia.event[i].pT() > 0.1){
         AliParticle photon;
         fill_AliParticle_with_pythia_particle(pythia.event, i, photon);
         photons.push_back(photon);
@@ -212,7 +212,7 @@ int main(int argc, char* argv[]) {
       }
 
 
-      if ((pythia.event[i].id() == idKc or pythia.event[i].id() == idp or pythia.event[i].id() == idPic) and pythia.event[i].pT() > 0.1){
+      if ((fabs(pythia.event[i].id()) == idKc or fabs(pythia.event[i].id()) == idp or fabs(pythia.event[i].id()) == idPic) and pythia.event[i].pT() > 0.1){
         AliParticle chargedp;
         fill_AliParticle_with_pythia_particle(pythia.event, i, chargedp);
         charged.push_back(chargedp);
