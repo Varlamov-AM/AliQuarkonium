@@ -236,7 +236,7 @@ int main(int argc, char* argv[]) {
 		General_event->charged              = charged;
 		General_event->neutral              = neutral;
 
-    if (electrons.size() != 0){
+    if (photons.size() != 0){
   		test_tree->Fill();
     } else {continue;}
 
