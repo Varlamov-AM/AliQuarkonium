@@ -60,15 +60,13 @@ int main(int argc, char* argv[]){
     
     chain->SetBranchAddress("AliEvent", &event);
 
-    TFile* output = new TFile("output_Soft_QCD_before_Geant.root", "RECREATE");
-    output->cd();
 
-	const int idK0L          =  130;
-	const int idn            =  2112;
-	const int idp            =  2212;
-	const int idPic          =  211;
-	const int idPin          =  111;
-	const int idKc           =  321;
+  	const int idK0L          =  130;
+	  const int idn            =  2112;
+	  const int idp            =  2212;
+	  const int idPic          =  211;
+  	const int idPin          =  111;
+	  const int idKc           =  321;
     
     TH2D* electrons_pt_eta = new TH2D("electrons_pt_eta", "electrons_pt_eta", 1000., 0., 20., 1000, -2.5, 2.5);
     TH2D* positrons_pt_eta = new TH2D("positrons_pt_eta", "positrons_pt_eta", 1000., 0., 10.,  1000, -2.5, 2.5);
@@ -220,6 +218,11 @@ int main(int argc, char* argv[]){
         }
     }
 
+    softQCD_tree->Write();
+
+    TFile* output = new TFile("output_Soft_QCD_before_Geant.root", "RECREATE");
+    output->cd();
+
     electrons_pt_eta->Write();
     positrons_pt_eta->Write();
     muons_pt_eta->Write();
@@ -241,11 +244,8 @@ int main(int argc, char* argv[]){
     pion_p_e->Write();
     neutron_p_e->Write();
     kaonl_p_e->Write();
-    
-    output->Close();
 
-    output_tree->cd();
-    softQCD_tree->Write();
+    output->Close();
 
     return 0;
 }

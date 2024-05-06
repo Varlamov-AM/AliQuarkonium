@@ -150,15 +150,15 @@ int main(int argc, char* argv[]) {
 			
 				if (pythia.event[pythia.event[i].daughter1()].id() == idJpsi and 
 					pythia.event[pythia.event[i].daughter2()].id() == idPhoton){
-					if (fabs(pythia.event[pythia.event[i].daughter2()].eta()) < 2){
+					if (fabs(pythia.event[pythia.event[i].daughter2()].eta()) < 1.6){
 						AliParticle signal_gamma;
 						AliParticle jpsi;
 						fill_AliParticle_with_pythia_particle(pythia.event, pythia.event[i].daughter1(), jpsi);
 						fill_AliParticle_with_pythia_particle(pythia.event, pythia.event[i].daughter2(), signal_gamma);
 						if (pythia.event[pythia.event[pythia.event[i].daughter1()].daughter1()].id() == idElectron and 
 							pythia.event[pythia.event[pythia.event[i].daughter1()].daughter2()].id() == -idElectron){
-							if (fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter1()].eta()) < 2 and 
-								fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter2()].eta()) < 2){
+							if (fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter1()].eta()) < 1.6 and 
+								fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter2()].eta()) < 1.6){
 								AliParticle signal_electron;
 								AliParticle signal_positron;
 								fill_AliParticle_with_pythia_particle(pythia.event, pythia.event[pythia.event[i].daughter1()].daughter1(), signal_electron);
@@ -175,44 +175,44 @@ int main(int argc, char* argv[]) {
 				}
 			}	
 
-      if (pythia.event[i].id() == idElectron and pythia.event[i].pT() > 0.1){
+      if (pythia.event[i].id() == idElectron and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
         AliParticle electron;
         fill_AliParticle_with_pythia_particle(pythia.event, i, electron);
         electrons.push_back(electron);
 	  	}
 
-      if (pythia.event[i].id() == -idElectron and pythia.event[i].pT() > 0.1){
+      if (pythia.event[i].id() == -idElectron and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
         AliParticle positron;
         fill_AliParticle_with_pythia_particle(pythia.event, i, positron);
         positrons.push_back(positron);
       }
 
-      if (pythia.event[i].id() == idMuon and pythia.event[i].pT() > 0.1){
+      if (pythia.event[i].id() == idMuon and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
         AliParticle muon;
         fill_AliParticle_with_pythia_particle(pythia.event, i, muon);
         muons.push_back(muon);
       }
 
-      if (pythia.event[i].id() == -idMuon and pythia.event[i].pT() > 0.1){
+      if (pythia.event[i].id() == -idMuon and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
         AliParticle antimuon;
         fill_AliParticle_with_pythia_particle(pythia.event, i, antimuon);
         antimuons.push_back(antimuon);
       }
 
-      if (pythia.event[i].id() == idPhoton and pythia.event[i].pT() > 0.1){
+      if (pythia.event[i].id() == idPhoton and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
         AliParticle photon;
         fill_AliParticle_with_pythia_particle(pythia.event, i, photon);
         photons.push_back(photon);
       }
 
-      if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn) and pythia.event[i].pT() > 0.1){
+      if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
         AliParticle neutralp;
         fill_AliParticle_with_pythia_particle(pythia.event, i, neutralp);
         neutral.push_back(neutralp);
       }
 
 
-      if ((fabs(pythia.event[i].id()) == idKc or fabs(pythia.event[i].id()) == idp or fabs(pythia.event[i].id()) == idPic) and pythia.event[i].pT() > 0.1){
+      if ((fabs(pythia.event[i].id()) == idKc or fabs(pythia.event[i].id()) == idp or fabs(pythia.event[i].id()) == idPic) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
         AliParticle chargedp;
         fill_AliParticle_with_pythia_particle(pythia.event, i, chargedp);
         charged.push_back(chargedp);
