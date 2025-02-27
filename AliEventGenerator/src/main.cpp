@@ -1,10 +1,10 @@
 // Stdlib header file for input and output.
 #include <iostream>
 #include <unistd.h>
+#include <cstdlib>
 
-// Header file to access Pythia 8 program elements.
-// #include "Pythia8/Pythia.h"
-#include "/data1/varlamov/software/pythia8310/include/Pythia8/Pythia.h"
+// Pythia8 headers
+#include "Pythia8/Pythia.h"
 
 // ROOT, for histogramming.
 #include "TH1.h"
@@ -150,15 +150,15 @@ int main(int argc, char* argv[]) {
 			
 				if (pythia.event[pythia.event[i].daughter1()].id() == idJpsi and 
 					pythia.event[pythia.event[i].daughter2()].id() == idPhoton){
-					if (fabs(pythia.event[pythia.event[i].daughter2()].eta()) < 1.6){
+					if (fabs(pythia.event[pythia.event[i].daughter2()].eta()) < 0.5){
 						AliParticle signal_gamma;
 						AliParticle jpsi;
 						fill_AliParticle_with_pythia_particle(pythia.event, pythia.event[i].daughter1(), jpsi);
 						fill_AliParticle_with_pythia_particle(pythia.event, pythia.event[i].daughter2(), signal_gamma);
 						if (pythia.event[pythia.event[pythia.event[i].daughter1()].daughter1()].id() == idElectron and 
 							pythia.event[pythia.event[pythia.event[i].daughter1()].daughter2()].id() == -idElectron){
-							if (fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter1()].eta()) < 1.6 and 
-								fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter2()].eta()) < 1.6){
+							if (fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter1()].eta()) < 0.5 and 
+								fabs(pythia.event[pythia.event[pythia.event[i].daughter1()].daughter2()].eta()) < 0.5){
 								AliParticle signal_electron;
 								AliParticle signal_positron;
 								fill_AliParticle_with_pythia_particle(pythia.event, pythia.event[pythia.event[i].daughter1()].daughter1(), signal_electron);
@@ -175,55 +175,56 @@ int main(int argc, char* argv[]) {
 				}
 			}	
 
-      if (pythia.event[i].id() == idElectron and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
-        AliParticle electron;
-        fill_AliParticle_with_pythia_particle(pythia.event, i, electron);
-        electrons.push_back(electron);
-	  	}
+		if (pythia.event[i].id() == idElectron and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+			AliParticle electron;
+			fill_AliParticle_with_pythia_particle(pythia.event, i, electron);
+			electrons.push_back(electron);
+			std::cout << pythia.event[i].status() << "\n";
+		}
 
-      if (pythia.event[i].id() == -idElectron and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
-        AliParticle positron;
-        fill_AliParticle_with_pythia_particle(pythia.event, i, positron);
-        positrons.push_back(positron);
-      }
+		if (pythia.event[i].id() == -idElectron and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+			AliParticle positron;
+			fill_AliParticle_with_pythia_particle(pythia.event, i, positron);
+			positrons.push_back(positron);
+		}
 
-      if (pythia.event[i].id() == idMuon and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
-        AliParticle muon;
-        fill_AliParticle_with_pythia_particle(pythia.event, i, muon);
-        muons.push_back(muon);
-      }
+		if (pythia.event[i].id() == idMuon and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+			AliParticle muon;
+			fill_AliParticle_with_pythia_particle(pythia.event, i, muon);
+			muons.push_back(muon);
+		}
 
-      if (pythia.event[i].id() == -idMuon and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
-        AliParticle antimuon;
-        fill_AliParticle_with_pythia_particle(pythia.event, i, antimuon);
-        antimuons.push_back(antimuon);
-      }
+		if (pythia.event[i].id() == -idMuon and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+			AliParticle antimuon;
+			fill_AliParticle_with_pythia_particle(pythia.event, i, antimuon);
+			antimuons.push_back(antimuon);
+		}
 
-      if (pythia.event[i].id() == idPhoton and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
-        AliParticle photon;
-        fill_AliParticle_with_pythia_particle(pythia.event, i, photon);
-        photons.push_back(photon);
-      }
+		if (pythia.event[i].id() == idPhoton and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+			AliParticle photon;
+			fill_AliParticle_with_pythia_particle(pythia.event, i, photon);
+			photons.push_back(photon);
+		}
 
-      if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
-        AliParticle neutralp;
-        fill_AliParticle_with_pythia_particle(pythia.event, i, neutralp);
-        neutral.push_back(neutralp);
-      }
+		if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+			AliParticle neutralp;
+			fill_AliParticle_with_pythia_particle(pythia.event, i, neutralp);
+			neutral.push_back(neutralp);
+		}
 
 
-      if ((fabs(pythia.event[i].id()) == idKc or fabs(pythia.event[i].id()) == idp or fabs(pythia.event[i].id()) == idPic) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 1.6){
-        AliParticle chargedp;
-        fill_AliParticle_with_pythia_particle(pythia.event, i, chargedp);
-        charged.push_back(chargedp);
-      }
+		if ((fabs(pythia.event[i].id()) == idKc or fabs(pythia.event[i].id()) == idp or fabs(pythia.event[i].id()) == idPic) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+			AliParticle chargedp;
+			fill_AliParticle_with_pythia_particle(pythia.event, i, chargedp);
+			charged.push_back(chargedp);
+		}
 
 
     }
 
 		General_event->signal_event_in_data = signal_event_in_data;
-		General_event->chic 	              = chic;
-		General_event->Jpsi 	              = Jpsi;
+		General_event->chic 	            = chic;
+		General_event->Jpsi 	            = Jpsi;
 		General_event->signal_electrons     = signal_electrons;
 		General_event->signal_positrons     = signal_positrons;
 		General_event->signal_photons       = signal_photons;

@@ -1,0 +1,3 @@
+#! /bin/bash
+
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PYTHIA8/lib:$ALI_QUARKONIUM/AliEventLib/build
