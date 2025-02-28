@@ -99,6 +99,11 @@ int main(int argc, char* argv[]){
                  "proton_pt_eta", 
                  1000., 0., 10., 
                  1000, -0.6, 0.6);
+    TH2D* antiproton_pt_eta = 
+        new TH2D("antiproton_pt_eta", 
+                 "antiproton_pt_eta", 
+                 1000., 0., 10., 
+                 1000, -0.6, 0.6);
     TH2D* kaon_pt_eta = 
         new TH2D("kaon_pt_eta", 
                  "kaon_pt_eta", 
@@ -119,16 +124,23 @@ int main(int argc, char* argv[]){
                  "neutron_pt_eta", 
                  1000., 0., 10., 
                  1000, -0.6, 0.6);
+    TH2D* antineutron_pt_eta = 
+        new TH2D("antineutron_pt_eta", 
+                 "antineutron_pt_eta", 
+                 1000., 0., 10., 
+                 1000, -0.6, 0.6);
     electrons_pt_eta->Sumw2();
     positrons_pt_eta->Sumw2();
     muons_pt_eta->Sumw2();
     antimuons_pt_eta->Sumw2();
     gamma_pt_eta->Sumw2();
     proton_pt_eta->Sumw2();
+    antiproton_pt_eta->Sumw2();
     kaon_pt_eta->Sumw2();
     pion_pt_eta->Sumw2();
     kaonl_pt_eta->Sumw2();
     neutron_pt_eta->Sumw2();
+    antineutron_pt_eta->Sumw2();
 
     TH2D* electrons_p_e = 
         new TH2D("electrons_p_e", 
@@ -160,6 +172,11 @@ int main(int argc, char* argv[]){
                  "proton_p_e", 
                  1000, 0., 20., 
                  1000., 0., 20.);
+    TH2D* antiproton_p_e = 
+        new TH2D("antiproton_p_e", 
+                 "antiproton_p_e", 
+                 1000, 0., 20., 
+                 1000., 0., 20.);
     TH2D* kaon_p_e = 
         new TH2D("kaon_p_e", 
                  "kaon_p_e", 
@@ -180,18 +197,23 @@ int main(int argc, char* argv[]){
                  "neutron_p_e", 
                  1000, 0., 20., 
                  1000., 0., 20.);
+    TH2D* antineutron_p_e = 
+        new TH2D("antineutron_p_e", 
+                 "antineutron_p_e", 
+                 1000, 0., 20., 
+                 1000., 0., 20.);
     electrons_p_e->Sumw2();
     positrons_p_e->Sumw2();
     muons_p_e->Sumw2();
     antimuons_p_e->Sumw2();
     gamma_p_e->Sumw2();
     proton_p_e->Sumw2();
+    antiproton_p_e->Sumw2();
     kaon_p_e->Sumw2();
     pion_p_e->Sumw2();
     kaonl_p_e->Sumw2();
     neutron_p_e->Sumw2();
-
-    std::set<int> id_pi_set;
+    antineutron_p_e->Sumw2();
 
     for (int i = 0; i < chain->GetEntries(); ++i){
 
@@ -267,6 +289,10 @@ int main(int argc, char* argv[]){
                 proton_pt_eta->Fill(charg.FMomentum().Pt(), charg.FMomentum().Eta());
                 proton_p_e->Fill(charg.FMomentum().P(), charg.FMomentum().E());
             }
+            if (charg.id == -idp){
+                antiproton_pt_eta->Fill(charg.FMomentum().Pt(), charg.FMomentum().Eta());
+                antiproton_p_e->Fill(charg.FMomentum().P(), charg.FMomentum().E());
+            }
             if (charg.id == idKc){
                 kaon_pt_eta->Fill(charg.FMomentum().Pt(), charg.FMomentum().Eta());
                 kaon_p_e->Fill(charg.FMomentum().P(), charg.FMomentum().E());
@@ -274,7 +300,6 @@ int main(int argc, char* argv[]){
             if (charg.id == idPic){
                 pion_pt_eta->Fill(charg.FMomentum().Pt(), charg.FMomentum().Eta());
                 pion_p_e->Fill(charg.FMomentum().P(), charg.FMomentum().E());
-                id_pi_set.insert(charg.id);
             }
             if (fabs(charg.FMomentum().Eta()) < 2.){
                 std::vector<double> tmp = {charg.p0, charg.px, charg.py, charg.pz, static_cast<double>(charg.id)};
@@ -285,6 +310,10 @@ int main(int argc, char* argv[]){
             if (neutr.id == idn){
                 neutron_pt_eta->Fill(neutr.FMomentum().Pt(), neutr.FMomentum().Eta());
                 neutron_p_e->Fill(neutr.FMomentum().P(), neutr.FMomentum().E());
+            }
+            if (neutr.id == -idn){
+                antineutron_pt_eta->Fill(neutr.FMomentum().Pt(), neutr.FMomentum().Eta());
+                antineutron_p_e->Fill(neutr.FMomentum().P(), neutr.FMomentum().E());
             }
             if (neutr.id == idK0L){
                 kaonl_pt_eta->Fill(neutr.FMomentum().Pt(), neutr.FMomentum().Eta());
@@ -299,11 +328,6 @@ int main(int argc, char* argv[]){
             softQCD_tree->Fill();
         }
     }
-
-    for (auto id : id_pi_set){
-        std::cout << id << " ";
-    }
-    std::cout << "\n";
     
     softQCD_tree->Write();
 
@@ -316,9 +340,11 @@ int main(int argc, char* argv[]){
     antimuons_pt_eta->Write();  
     gamma_pt_eta->Write();
     proton_pt_eta->Write();
+    antiproton_pt_eta->Write();
     kaon_pt_eta->Write();
     pion_pt_eta->Write();
     neutron_pt_eta->Write();
+    antineutron_pt_eta->Write();
     kaonl_pt_eta->Write();
 
     electrons_p_e->Write();
@@ -327,9 +353,11 @@ int main(int argc, char* argv[]){
     antimuons_p_e->Write();  
     gamma_p_e->Write();
     proton_p_e->Write();
+    antiproton_p_e->Write();
     kaon_p_e->Write();
     pion_p_e->Write();
     neutron_p_e->Write();
+    antineutron_p_e->Write();
     kaonl_p_e->Write();
 
     output->Close();

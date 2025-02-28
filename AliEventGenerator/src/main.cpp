@@ -179,7 +179,6 @@ int main(int argc, char* argv[]) {
 			AliParticle electron;
 			fill_AliParticle_with_pythia_particle(pythia.event, i, electron);
 			electrons.push_back(electron);
-			std::cout << pythia.event[i].status() << "\n";
 		}
 
 		if (pythia.event[i].id() == -idElectron and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
@@ -206,7 +205,7 @@ int main(int argc, char* argv[]) {
 			photons.push_back(photon);
 		}
 
-		if ((pythia.event[i].id() == idK0L or pythia.event[i].id() == idn) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
+		if ((pythia.event[i].id() == idK0L or fabs(pythia.event[i].id()) == idn) and pythia.event[i].pT() > 0.1 and fabs(pythia.event[i].eta()) < 0.5 and pythia.event[i].status() > 80 and pythia.event[i].status() < 92){
 			AliParticle neutralp;
 			fill_AliParticle_with_pythia_particle(pythia.event, i, neutralp);
 			neutral.push_back(neutralp);
